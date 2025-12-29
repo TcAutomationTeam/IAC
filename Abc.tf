@@ -10,3 +10,5 @@ resource "aws_s3_bucket_object" "my_file_upload" {
   acl    = "private"
   content_type = "text/plain"
 }
+
+Test 123
