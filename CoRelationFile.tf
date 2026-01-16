@@ -1,23 +1,65 @@
-provider "aws" {
-  region = "ap-south-1"
-}
 
-# EC2 Instance with AMI 1
-resource "aws_instance" "ec2_instance_1" {
-  ami           = "ami-0f5ee92e2d63afc18"   # AMI ID 1
-  instance_type = "t2.micro"
-
-  tags = {
-    Name = "My-EC2-Server"
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
   }
 }
 
-# EC2 Instance with AMI 2
-resource "aws_instance" "ec2_instance_2" {
-  ami           = "ami-0a4408457f9a03be3"   # AMI ID 2
-  instance_type = "t2.micro"
+# Configure the AWS Provider
+provider "aws" {
+  region = "ap-northeast-1"
+}
 
-  tags = {
-    Name = "My-EC2-Server"
+resource "aws_lb" "aws_lb" {
+  name = "test-alb"
+  #Optional. Defaults to application
+  load_balancer_type = "application"
+}
+
+# Listener with acm certificate and HTTPS protocol
+resource "aws_lb_listener" "aws_lb_listener" {
+  load_balancer_arn = aws_lb.aws_lb.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = "arn:aws:acm:us-east-1:860454016470:certificate/322f8694-62f9-4e5a-b0ac-2e78dcc68e7c"
+  default_action {
+    type = "forward"
+  }
+}
+
+# Listener with acm certificate and HTTPS protocol
+resource "aws_lb_listener" "aws_lb_listener-1" {
+  load_balancer_arn = aws_lb.aws_lb.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = "arn:aws:acm:us-east-1:860454016470:certificate/322f8694-62f9-4e5a-b0ac-2e78dcc68e7c"
+  default_action {
+    type = "forward"
+  }
+}
+
+# Listener with HTTP protocol
+resource "aws_lb_listener" "aws_lb_listener-3" {
+  load_balancer_arn = aws_lb.aws_lb.arn
+  port              = 80
+  protocol          = "HTTP"
+  default_action {
+    type = "forward"
+  }
+}
+
+# Listener without acm certificate and HTTPS protocol
+resource "aws_lb_listener" "aws_lb_listener-4" {
+  load_balancer_arn = aws_lb.aws_lb.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  default_action {
+    type = "forward"
   }
 }
